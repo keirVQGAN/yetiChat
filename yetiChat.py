@@ -39,7 +39,7 @@ def heading(title=None):
     console.print(Rule(title, style="bright_white"))
 
 def title(title,colour="c"):
-    title_text = Text(title, style="bold bright_white")
+    title_text = Text(title, style="white")
     if colour == "c": colour = "cyan"
     if colour == "m": colour = "magenta"
     if colour == "y": colour = "yellow"
