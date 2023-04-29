@@ -50,6 +50,3 @@ def title(title,colour):
     if colour == "y": colour = "yellow"
     
     console.print(Panel(title_text, expand=True, style=f"{colour} on black"))
-
-if __name__ == '__main__':
-  title("yetiChat 0.0.1)
