@@ -12,9 +12,9 @@ def timeTaken(start_time) :
     timeTaken_str = str ( timeTaken )
     timeTaken_split = timeTaken_str.split ( '.' )
     timeTakenShort = timeTaken_split [ 0 ] + '' + timeTaken_split [ 1 ] [ :0 ]
-    title ( 'Complete:' , f'{timeTakenShort} Seconds' )
+    title ( f'Complete: {timeTakenShort} Seconds', "y")
 
-def chatAPI(USER, SYSTEM, GPT_MODEL):
+def chatAPI(USER, SYSTEM, GPT_MODEL="gpt-3.5-turbo"):
     completion = openai.ChatCompletion.create(
         model=GPT_MODEL,
         messages=[
@@ -47,10 +47,10 @@ def saveJSON(file_path, data, mode='w'):
 def heading(title=None):
     console.print(Rule(title, style="bright_white"))
 
-def title(title,colour):
+def title(title,colour="c"):
     title_text = Text(title, style="bold bright_white")
     if colour == "c": colour = "cyan"
     if colour == "m": colour = "magenta"
     if colour == "y": colour = "yellow"
     
-    console.print(Panel(title_text, expand=True, style=f"{colour} on black"))
+    console.print(Panel(title_text, expand=False, style=f"{colour} on black"))
