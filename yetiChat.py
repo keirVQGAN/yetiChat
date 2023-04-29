@@ -5,15 +5,6 @@ from rich.text import Text
 from rich.console import Console
 console = Console()
 
-def timeTaken(start_time) :
-    import time
-    timeTakenFloat = "%s seconds" % (time.time ( ) - start_time)
-    timeTaken = timeTakenFloat
-    timeTaken_str = str ( timeTaken )
-    timeTaken_split = timeTaken_str.split ( '.' )
-    timeTakenShort = timeTaken_split [ 0 ] + '' + timeTaken_split [ 1 ] [ :0 ]
-    title ( f'Complete: {timeTakenShort} Seconds', "y")
-
 def chatAPI(USER, SYSTEM, GPT_MODEL="gpt-3.5-turbo"):
     completion = openai.ChatCompletion.create(
         model=GPT_MODEL,
@@ -54,3 +45,12 @@ def title(title,colour="c"):
     if colour == "y": colour = "yellow"
     
     console.print(Panel(title_text, expand=False, style=f"{colour} on black"))
+
+def timeTaken(start_time):
+    import time
+    timeTakenFloat = "%s seconds" % (time.time ( ) - start_time)
+    timeTaken = timeTakenFloat
+    timeTaken_str = str ( timeTaken )
+    timeTaken_split = timeTaken_str.split ( '.' )
+    timeTakenShort = timeTaken_split [ 0 ] + '' + timeTaken_split [ 1 ] [ :0 ]
+    title ( f'Complete: {timeTakenShort} Seconds', "Bright White")
