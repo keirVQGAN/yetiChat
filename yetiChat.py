@@ -57,54 +57,6 @@ def image(title, animal, api_key, prompt, width=512, height=512, samples=2, mask
     response = requests.post(url, data=json.dumps(data), headers=headers)
     return response
 
-
-def setup():
-    """
-    This function sets up the environment, including mounting the Google Drive, removing the sample_data
-    directory, and installing required packages.
-    """
-    start_time = time.time()
-    warnings.filterwarnings('ignore')
-
-    paths = {
-        'drive': '/content/drive',
-        'sample_data': '/content/sample_data',
-        'yetiChat': '/content/yetiChat',
-        'PATH': '/content/drive/MyDrive/yetiChat',
-        'OUT': '/content/drive/MyDrive/yetiChat/out',
-        'IN': '/content/drive/MyDrive/yetiChat/in'
-    }
-
-    PATH = paths['PATH']
-    OUT = paths['OUT']
-    IN = paths['IN']
-
-    if not os.path.ismount(paths['drive']):
-        drive.mount(paths['drive'])
-        clear_output()
-
-    if os.path.isdir(paths['sample_data']):
-        shutil.rmtree(paths['sample_data'])
-
-    if not os.path.isdir(paths['yetiChat']):
-        !git clone https://github.com/keirVQGAN/yetiChat {paths['yetiChat']} &> /dev/null
-        shutil.copy(f'{paths["yetiChat"]}/yetiChat.py', '/content')
-        !pip install -r {paths["yetiChat"]}/requirements.txt &> /dev/null
-        clear_output()
-
-    import yetiChat as yc, openai
-    yc.title('yetiChat 0.0.1', "m" if not os.path.isdir(paths['yetiChat']) else "c")
-
-    if not os.path.isdir(paths['yetiChat']):
-        yc.title('Mounted GDrive', "c")
-        installed_packages = ','.join(open(f'{paths["yetiChat"]}/requirements.txt', 'r').readlines()).strip().replace('\\n', ', ')
-        yc.title(f"Installed ~ {installed_packages}", "y")
-        yc.timeTaken(start_time)
-
-    with open(os.path.join(PATH, 'ini/key.txt'), "r") as f:
-        openai.api_key = f.read().strip("\n")
-
-
 def chatAPI(user: str, system: str, gpt_model: str = "gpt-3.5-turbo", name: Optional[str] = None, temperature: float = 1, top_p: float = 1, n: int = 1, stream: bool = False, stop: Optional[Union[str, List[str]]] = None, max_tokens: Optional[int] = None, presence_penalty: float = 0, frequency_penalty: float = 0, logit_bias: Optional[Dict[int, float]] = None) -> Dict:
     messages = [
         {"role": "user", "content": user},
