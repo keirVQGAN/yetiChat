@@ -1,56 +1,62 @@
-import os, json, openai, datetime
-from rich import print
-from rich.panel import Panel
-from rich.text import Text
-from rich.console import Console
-console = Console()
+from typing import List, Union, Optional, Dict
+import os, json, openai, datetime, time
+from pathlib import Path
+from rich import print, panel as rich_panel, text as rich_text, console as rich_console
 
-def chatAPI(USER, SYSTEM, GPT_MODEL="gpt-3.5-turbo"):
-    completion = openai.ChatCompletion.create(
-        model=GPT_MODEL,
-        messages=[
-            {"role": "user", "content": USER},
-            {"role": "system", "content": SYSTEM}
-        ]
-    )
-    GPT_REPLY = completion.choices[0].message.content.strip()
-    print(GPT_REPLY) 
+console = rich_console.Console()
+
+def chatAPI(user: str, system: str, gpt_model: str = "gpt-3.5-turbo", name: Optional[str] = None, temperature: float = 1, top_p: float = 1, n: int = 1, stream: bool = False, stop: Optional[Union[str, List[str]]] = None, max_tokens: Optional[int] = None, presence_penalty: float = 0, frequency_penalty: float = 0, logit_bias: Optional[Dict[int, float]] = None) -> Dict:
+    messages = [
+        {"role": "user", "content": user},
+        {"role": "system", "content": system, "name": name} if name else {"role": "system", "content": system}
+    ]
+
+    api_call_args = {
+        "model": gpt_model,
+        "messages": messages,
+        "temperature": temperature,
+        "top_p": top_p,
+        "n": n,
+        "stream": stream,
+        "stop": stop,
+        "max_tokens": max_tokens,
+        "presence_penalty": presence_penalty,
+        "frequency_penalty": frequency_penalty
+    }
+    
+    if logit_bias is not None:
+        api_call_args["logit_bias"] = logit_bias
+
+    completion = openai.ChatCompletion.create(**api_call_args)
+    
+    gpt_reply = completion.choices[0].message.content.strip()
+    title(gpt_reply)
     return completion.to_dict()
 
-def saveJSON(file_path, data, mode='w'):
-    existing_data = []
-
-    # Load existing data
-    if os.path.exists(file_path):
-        with open(file_path, 'r') as f:
-            existing_data = json.load(f)
-
-    # Check if the new entry is not a duplicate
-    entry_id = data['id']
-    if entry_id not in [entry['id'] for entry in existing_data]:
-        existing_data.append(data)
-        with open(file_path, 'w') as f:
-            json.dump(existing_data, f, indent=4)
-        print(f'Saved data to {file_path}')
-    else:
-        print(f'Data with id {entry_id} already exists in {file_path}')
-
-def heading(title=None):
-    console.print(Rule(title, style="bright_white"))
-
-def title(title,colour="c"):
-    title_text = Text(title, style="white")
-    if colour == "c": colour = "cyan"
-    if colour == "m": colour = "magenta"
-    if colour == "y": colour = "yellow"
+def saveJSON(file_path: str, data: Dict, mode: str = 'w') -> None:
+    file_path = Path(file_path)
     
-    console.print(Panel(title_text, expand=False, style=f"{colour} on black"))
+    if file_path.exists():
+        with file_path.open('r') as f:
+            existing_data = json.load(f)
+    else:
+        existing_data = []
 
-def timeTaken(start_time):
-    import time
-    timeTakenFloat = "%s seconds" % (time.time ( ) - start_time)
-    timeTaken = timeTakenFloat
-    timeTaken_str = str ( timeTaken )
-    timeTaken_split = timeTaken_str.split ( '.' )
-    timeTakenShort = timeTaken_split [ 0 ] + '' + timeTaken_split [ 1 ] [ :0 ]
-    title ( f'Complete: {timeTakenShort} Seconds', "white")
+    if data['id'] not in [entry['id'] for entry in existing_data]:
+        existing_data.append(data)
+        with file_path.open('w') as f:
+            json.dump(existing_data, f, indent=4)
+            
+def heading(title: Optional[str] = None) -> None:
+    console.print(rich_console.Rule(title, style="bright_white"))
+
+def title(title: str, colour: str = "c") -> None:
+    title_text = rich_text.Text(title, style="white")
+    colour = {"c": "cyan", "m": "magenta", "y": "yellow"}.get(colour, colour)
+    console.print(rich_panel.Panel(title_text, expand=False, style=f"{colour} on black"))
+
+def timeTaken(start_time: float) -> None:
+    time_taken_float = "%s seconds" % (time.time() - start_time)
+    time_taken_split = str(time_taken_float).split('.')
+    time_taken_short = time_taken_split[0] + time_taken_split[1][:0]
+    title(f'Complete: {time_taken_short} Seconds', "white")
