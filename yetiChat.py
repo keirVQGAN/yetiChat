@@ -44,5 +44,9 @@ def heading(title=None):
     console.print(Rule(title, style="bright_white"))
 
 def title(title,colour):
-
-if __name__ == '__main__':
+    title_text = Text(title, style="bold bright_white")
+    if colour == "c": colour = "cyan"
+    if colour == "m": colour = "magenta"
+    if colour == "y": colour = "yellow"
+    
+    console.print(Panel(title_text, expand=True, style=f"{colour} on black"))
