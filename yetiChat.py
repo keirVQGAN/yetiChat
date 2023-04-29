@@ -5,10 +5,14 @@ from rich.text import Text
 from rich.console import Console
 console = Console()
 
-def mount():
-  if not os.path.isdir('/content/drive'):
-    from google.colab import drive
-    drive.mount('/content/drive')
+def timeTaken(start_time) :
+    import time
+    timeTakenFloat = "%s seconds" % (time.time ( ) - start_time)
+    timeTaken = timeTakenFloat
+    timeTaken_str = str ( timeTaken )
+    timeTaken_split = timeTaken_str.split ( '.' )
+    timeTakenShort = timeTaken_split [ 0 ] + '' + timeTaken_split [ 1 ] [ :0 ]
+    title ( 'Complete:' , f'{timeTakenShort} Seconds' )
 
 def chatAPI(USER, SYSTEM, GPT_MODEL):
     completion = openai.ChatCompletion.create(
