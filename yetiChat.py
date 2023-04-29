@@ -53,4 +53,4 @@ def timeTaken(start_time):
     timeTaken_str = str ( timeTaken )
     timeTaken_split = timeTaken_str.split ( '.' )
     timeTakenShort = timeTaken_split [ 0 ] + '' + timeTaken_split [ 1 ] [ :0 ]
-    title ( f'Complete: {timeTakenShort} Seconds', "White")
+    title ( f'Complete: {timeTakenShort} Seconds', "white")
