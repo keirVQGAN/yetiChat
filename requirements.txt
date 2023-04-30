@@ -1,3 +1,5 @@
 rich[jupyter]
 langchain
 openai
+weaviate-client
+gradio
